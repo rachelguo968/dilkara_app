@@ -1,0 +1,3 @@
+class SliderrectangleelevenItemModel {
+  String? id = "";
+}

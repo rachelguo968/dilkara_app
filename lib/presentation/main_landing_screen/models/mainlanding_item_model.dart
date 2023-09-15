@@ -1,0 +1,3 @@
+class MainlandingItemModel {
+  String? id = "";
+}
