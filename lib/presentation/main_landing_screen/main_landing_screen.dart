@@ -88,6 +88,10 @@ class MainLandingScreen extends StatelessWidget {
               top: 1,
               bottom: 5,
             ),
+            onTap: () {
+              NavigatorService.navigatorKey.currentState!
+                  .pushNamed(AppRoutes.appNavigationScreen);
+            },
           ),
           centerTitle: true,
           title: AppbarTitle(
@@ -108,6 +112,10 @@ class MainLandingScreen extends StatelessWidget {
                 right: 5,
                 bottom: 1,
               ),
+              onTap: () {
+                NavigatorService.navigatorKey.currentState!
+                    .pushNamed(AppRoutes.productSearchScreen);
+              },
             ),
             AppbarImage(
               height: getVerticalSize(
@@ -121,6 +129,10 @@ class MainLandingScreen extends StatelessWidget {
                 left: 10,
                 right: 5,
               ),
+              onTap: () {
+                NavigatorService.navigatorKey.currentState!
+                    .pushNamed(AppRoutes.cartScreen);
+              },
             ),
             AppbarImage(
               height: getVerticalSize(
@@ -136,6 +148,10 @@ class MainLandingScreen extends StatelessWidget {
                 right: 21,
                 bottom: 1,
               ),
+              onTap: () {
+                NavigatorService.navigatorKey.currentState!
+                    .pushNamed(AppRoutes.profileProfileInfoTabContainerScreen);
+              },
             ),
           ],
         ),
@@ -442,179 +458,7 @@ class MainLandingScreen extends StatelessWidget {
                         ),
                     ),
                   ),
-                  Padding(
-                    padding: getPadding(
-                      top: 62,
-                    ),
-                    child: Text(
-                      "msg_actual_categori".tr.toUpperCase(),
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.left,
-                      style: AppStyle.txtLatoRegular18.copyWith(
-                        letterSpacing: getHorizontalSize(
-                          1.08,
-                        ),
-                      ),
-                    ),
-                  ),
-                  CustomImageView(
-                    imagePath: ImageConstant.imgRectangle7,
-                    height: getVerticalSize(
-                      386,
-                    ),
-                    width: getHorizontalSize(
-                      358,
-                    ),
-                    margin: getMargin(
-                      top: 34,
-                    ),
-                  ),
-                  Padding(
-                    padding: getPadding(
-                      top: 24,
-                    ),
-                    child: Text(
-                      "lbl_outerwear".tr,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.left,
-                      style: AppStyle.txtLatoBold15,
-                    ),
-                  ),
-                  Padding(
-                    padding: getPadding(
-                      top: 10,
-                    ),
-                    child: Text(
-                      "msg_raincoats_swea".tr,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.left,
-                      style: AppStyle.txtLatoRegular12,
-                    ),
-                  ),
-                  CustomImageView(
-                    imagePath: ImageConstant.imgRectangle7386x358,
-                    height: getVerticalSize(
-                      386,
-                    ),
-                    width: getHorizontalSize(
-                      358,
-                    ),
-                    margin: getMargin(
-                      top: 24,
-                    ),
-                  ),
-                  Padding(
-                    padding: getPadding(
-                      top: 24,
-                    ),
-                    child: Text(
-                      "lbl_leather_shoes".tr,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.left,
-                      style: AppStyle.txtLatoBold15,
-                    ),
-                  ),
-                  Padding(
-                    padding: getPadding(
-                      top: 10,
-                    ),
-                    child: Text(
-                      "msg_shoes_sandals".tr,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.left,
-                      style: AppStyle.txtLatoRegular12,
-                    ),
-                  ),
-                  CustomImageView(
-                    imagePath: ImageConstant.imgRectangle8,
-                    height: getVerticalSize(
-                      386,
-                    ),
-                    width: getHorizontalSize(
-                      358,
-                    ),
-                    margin: getMargin(
-                      top: 24,
-                    ),
-                  ),
-                  Padding(
-                    padding: getPadding(
-                      top: 25,
-                    ),
-                    child: Text(
-                      "lbl_light_dresses".tr,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.left,
-                      style: AppStyle.txtLatoBold15,
-                    ),
-                  ),
-                  Padding(
-                    padding: getPadding(
-                      top: 9,
-                    ),
-                    child: Text(
-                      "msg_evening_casual".tr,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.left,
-                      style: AppStyle.txtLatoRegular12,
-                    ),
-                  ),
-                  Padding(
-                    padding: getPadding(
-                      top: 48,
-                    ),
-                    child: Text(
-                      "msg_only_trusted_br".tr.toUpperCase(),
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.left,
-                      style: AppStyle.txtLatoRegular18.copyWith(
-                        letterSpacing: getHorizontalSize(
-                          1.08,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: getPadding(
-                      left: 63,
-                      top: 37,
-                      right: 63,
-                    ),
-                    child: BlocSelector<MainLandingBloc, MainLandingState,
-                        MainLandingModel?>(
-                      selector: (state) => state.mainLandingModelObj,
-                      builder: (context, mainLandingModelObj) {
-                        return GridView.builder(
-                          shrinkWrap: true,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            mainAxisExtent: getVerticalSize(
-                              59,
-                            ),
-                            crossAxisCount: 3,
-                            mainAxisSpacing: getHorizontalSize(
-                              12,
-                            ),
-                            crossAxisSpacing: getHorizontalSize(
-                              12,
-                            ),
-                          ),
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount:
-                              mainLandingModelObj?.mainlandingItemList.length ??
-                                  0,
-                          itemBuilder: (context, index) {
-                            MainlandingItemModel model = mainLandingModelObj
-                                    ?.mainlandingItemList[index] ??
-                                MainlandingItemModel();
-                            return MainlandingItemWidget(
-                              model,
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  ),
+
                   Container(
                     width: double.maxFinite,
                     child: Container(

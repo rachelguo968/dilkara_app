@@ -11,10 +11,12 @@ class ProductPageModel extends Equatable {
       {List<SliderrectangleelevenItemModel>? sliderrectangleelevenItemList}) {
     return ProductPageModel(
       sliderrectangleelevenItemList:
-          sliderrectangleelevenItemList ?? this.sliderrectangleelevenItemList,
+      sliderrectangleelevenItemList ?? this.sliderrectangleelevenItemList,
     );
   }
 
   @override
   List<Object?> get props => [sliderrectangleelevenItemList];
 }
+
+

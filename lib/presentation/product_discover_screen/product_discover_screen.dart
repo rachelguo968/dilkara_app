@@ -34,24 +34,24 @@ class ProductDiscoverScreen extends StatelessWidget {
                       onTapArrowleft(context);
                     }),
                 centerTitle: true,
-                title: AppbarTitle(text: "lbl_shopsie".tr)),
+                title: AppbarTitle(text: "Dilkara".tr)),
             body: Padding(
                 padding: getPadding(left: 16, top: 5, right: 16),
                 child: BlocSelector<ProductDiscoverBloc, ProductDiscoverState,
-                        ProductDiscoverModel?>(
+                    ProductDiscoverModel?>(
                     selector: (state) => state.productDiscoverModelObj,
                     builder: (context, productDiscoverModelObj) {
                       return GridView.builder(
                           shrinkWrap: true,
                           gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                  mainAxisExtent: getVerticalSize(309),
-                                  crossAxisCount: 2,
-                                  mainAxisSpacing: getHorizontalSize(16),
-                                  crossAxisSpacing: getHorizontalSize(16)),
+                          SliverGridDelegateWithFixedCrossAxisCount(
+                              mainAxisExtent: getVerticalSize(309),
+                              crossAxisCount: 2,
+                              mainAxisSpacing: getHorizontalSize(16),
+                              crossAxisSpacing: getHorizontalSize(16)),
                           physics: NeverScrollableScrollPhysics(),
                           itemCount:
-                              productDiscoverModelObj?.listItemList.length ?? 0,
+                          productDiscoverModelObj?.listItemList.length ?? 0,
                           itemBuilder: (context, index) {
                             ListItemModel model =
                                 productDiscoverModelObj?.listItemList[index] ??
