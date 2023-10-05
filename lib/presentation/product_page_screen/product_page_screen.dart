@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../models/DBHelper.dart';
 import '../../models/cart.dart';
 import '../../models/cartprovider.dart';
+import '../../models/item.dart';
 import '../cart_screen/cart_screen.dart';
 import 'bloc/product_page_bloc.dart';
 import 'package:http/http.dart' as http;
@@ -53,61 +54,77 @@ class _ProductPageScreen extends State<ProductPageScreen> {
     }
   }
 
-  Future<String> getProductImage(int productId) async {
-    final String apiUrl =
-        'https://dilkara.com.au/wc-api/v3/products/$productId';
 
-    final response = await http.get(Uri.parse(apiUrl));
 
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> productData = json.decode(response.body);
-
-      if (productData.containsKey('images') &&
-          productData['images'] is List &&
-          productData['images'].isNotEmpty) {
-        final List<dynamic> images = productData['images'];
-        final String imageUrl = images[0]['src'];
-
-        if (imageUrl != null && imageUrl.isNotEmpty) {
-          return imageUrl;
-        }
-      }
-    }
-    return 'https://dilkara.com.au/wp-content/uploads/2023/03/brandmark-design-3.png';
-  }
-
-  Future<void> saveData(BuildContext context, int index) async {
-    final cart = Provider.of<CartProvider>(context, listen: false);
-    final dbHelper = await DBHelper();
-
-    final productList = await products; // Wait for the future to complete
-
-    dbHelper.insert(
-      Cart(
-        id: index,
-        productId: index.toString(),
-        productName: productList[index]['title'] as String?,
-        initialPrice: (productList[index]['price'] as double?)?.toInt(),
-        productPrice: (productList[index]['price'] as double?)?.toInt(),
-        quantity: ValueNotifier(1),
-        unitTag: productList[index]['unit'] as String?,
-        image: productList[index]['image'] as String?,
-      ),
-    ).then((value) {
-      cart.addTotalPrice(productList[index]['price'] as double? ?? 0.0);
-      cart.addCounter();
-      print('Product Added to cart');
-    }).onError((error, stackTrace) {
-      print(error.toString());
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
+    loadProductsFromApi();
+    final cart = Provider.of<CartProvider>(context);
+    final dbHelper = DBHelper();
+    void saveData(int index) {
+      dbHelper
+          .insert(
+        Cart(
+          id: index,
+          productId: index.toString(),
+          productName: productitemlist[index].name,
+          initialPrice: productitemlist[index].price.toInt(),
+          productPrice: productitemlist[index].price.toInt(),
+          quantity: ValueNotifier(1),
+          unitTag: productitemlist[index].unit,
+          image: productitemlist[index].image,
+        ),
+      )
+          .then((value) {
+        cart.addTotalPrice(productitemlist[index].price.toDouble());
+        cart.addCounter();
+        print('Product Added to cart');
+      }).onError((error, stackTrace) {
+        print(error.toString());
+      });
+    }
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: AppbarTitle(text: "Dilkara".tr),
+        title: const Text('Dilkara'),
+        actions: [
+          Stack(
+            alignment: Alignment.topRight,
+            children: [
+              IconButton(
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => CartScreen()));
+                },
+                icon: const Icon(Icons.shopping_cart),
+              ),
+              Consumer<CartProvider>(
+                builder: (context, value, child) {
+                  final itemCount = value.getCounter();
+                  return itemCount > 0
+                      ? CircleAvatar(
+                          radius: 10,
+                          backgroundColor: Colors.red,
+                          child: Text(
+                            itemCount.toString(),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        )
+                      : const SizedBox
+                          .shrink(); // Hide the badge when count is 0
+                },
+              ),
+            ],
+          ),
+          const SizedBox(
+            width: 20.0,
+          ),
+        ],
       ),
       body: FutureBuilder<dynamic>(
         future: products,
@@ -124,27 +141,21 @@ class _ProductPageScreen extends State<ProductPageScreen> {
                 final product = productList[index];
                 final productName = product['title'] as String?;
                 return ListTile(
-                  leading: FutureBuilder(
-                    future: getProductImage(product[
-                    'id']), // Replace with your own function to fetch the image URL
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.done) {
-                        if (snapshot.hasData) {
-                          return Image.network(
-                            (snapshot.data as String?) ??
-                                '', // Cast to String or use an empty string if it's null
-                            width: 80,
-                            height: 80,
-                            fit: BoxFit.cover,
-                          );
-                        } else {
-                          // If image URL is not available, you can display a placeholder or an empty container
-                          return Container(
-                              width: 80, height: 80, color: Colors.grey);
-                        }
+                  leading: Builder(
+                    builder: (context) {
+                      if (productitemlist.isNotEmpty) {
+                        return Image.network(
+                          productitemlist[index].image,
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.cover,
+                        );
                       } else {
-                        // While waiting for the image to load, you can display a loading indicator
-                        return CircularProgressIndicator();
+                        return Container(
+                          width: 80,
+                          height: 80,
+                          color: Colors.grey,
+                        );
                       }
                     },
                   ),
@@ -162,11 +173,11 @@ class _ProductPageScreen extends State<ProductPageScreen> {
                   ),
                   trailing: ElevatedButton(
                       onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => CartScreen()));
+                        saveData(index);
                       },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(Colors.black54),
+                      ),
                       child: const Text('Add to Cart')),
                 );
               },
@@ -177,4 +188,3 @@ class _ProductPageScreen extends State<ProductPageScreen> {
     );
   }
 }
-

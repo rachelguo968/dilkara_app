@@ -20,7 +20,7 @@ class WooCommerceApiService {
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
-      throw Exception('Failed to load products');
+      throw Exception('Failed to load products in wooservice');
     }
   }
 

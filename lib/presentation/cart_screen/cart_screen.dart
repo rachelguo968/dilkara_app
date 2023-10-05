@@ -1,3 +1,4 @@
+import 'package:dilkara/models/item.dart';
 import 'package:provider/provider.dart';
 import '../../models/DBHelper.dart';
 import '../../models/cartprovider.dart';
@@ -10,6 +11,7 @@ import 'package:dilkara/widgets/app_bar/custom_app_bar.dart';
 import 'package:dilkara/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import '../../models/cart.dart';
+import 'package:badges/badges.dart';
 
 class CartScreen extends StatefulWidget {
   static Widget builder(BuildContext context) {
@@ -90,7 +92,7 @@ class _CartScreenState extends State<CartScreen> {
                           itemCount: provider.cart.length,
                           itemBuilder: (context, index) {
                             return Card(
-                              color: Colors.blueGrey.shade200,
+                              color: Colors.white70,
                               elevation: 5.0,
                               child: Padding(
                                 padding: const EdgeInsets.all(4.0),
@@ -99,11 +101,11 @@ class _CartScreenState extends State<CartScreen> {
                                       MainAxisAlignment.spaceEvenly,
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
-                                    Image(
-                                      height: 80,
+                                    Image.network(
+                                      productitemlist[index].image,
                                       width: 80,
-                                      image: AssetImage(
-                                          provider.cart[index].image!),
+                                      height: 80,
+                                      fit: BoxFit.cover,
                                     ),
                                     SizedBox(
                                       width: 130,
@@ -127,23 +129,6 @@ class _CartScreenState extends State<CartScreen> {
                                                   TextSpan(
                                                       text:
                                                           '${provider.cart[index].productName!}\n',
-                                                      style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold)),
-                                                ]),
-                                          ),
-                                          RichText(
-                                            maxLines: 1,
-                                            text: TextSpan(
-                                                text: 'Unit: ',
-                                                style: TextStyle(
-                                                    color: Colors
-                                                        .blueGrey.shade800,
-                                                    fontSize: 16.0),
-                                                children: [
-                                                  TextSpan(
-                                                      text:
-                                                          '${provider.cart[index].unitTag!}\n',
                                                       style: const TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold)),
@@ -229,7 +214,7 @@ class _CartScreenState extends State<CartScreen> {
                                         },
                                         icon: Icon(
                                           Icons.delete,
-                                          color: Colors.red.shade800,
+                                          color: Colors.black54,
                                         )),
                                   ],
                                 ),
@@ -264,15 +249,21 @@ class _CartScreenState extends State<CartScreen> {
             ],
           ),
         ),
-        bottomNavigationBar: CustomButton(
-          height: getVerticalSize(
-            48,
-          ),
-          text: "lbl_pay_111_80".tr.toUpperCase(),
-          margin: getMargin(
-            left: 32,
-            right: 32,
-            bottom: 64,
+        bottomNavigationBar: InkWell(
+          onTap: () {
+          },
+          child: Container(
+            color: Colors.black54,
+            alignment: Alignment.center,
+            height: 50.0,
+            child: const Text(
+              'Proceed to Pay',
+              style: TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
           ),
         ),
       ),

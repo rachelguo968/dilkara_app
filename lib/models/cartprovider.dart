@@ -54,6 +54,10 @@ class CartProvider with ChangeNotifier {
     return _counter;
   }
 
+  void addToCart(Cart cartItem) {
+    cart.add(cartItem);
+  }
+
   void addQuantity(int id) {
     final index = cart.indexWhere((element) => element.id == id);
     cart[index].quantity!.value = cart[index].quantity!.value + 1;
