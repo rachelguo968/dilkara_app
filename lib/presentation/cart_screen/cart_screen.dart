@@ -23,7 +23,7 @@ class CartScreen extends StatefulWidget {
   }
 
   @override
-  State<CartScreen> createState() => _CartScreenState();
+  _CartScreenState createState() => _CartScreenState();
 }
 
 class _CartScreenState extends State<CartScreen> {
@@ -80,10 +80,10 @@ class _CartScreenState extends State<CartScreen> {
                     if (provider.cart.isEmpty) {
                       return const Center(
                           child: Text(
-                            'Your Cart is Empty',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18.0),
-                          ));
+                        'Your Cart is Empty',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18.0),
+                      ));
                     } else {
                       return ListView.builder(
                           shrinkWrap: true,
@@ -96,7 +96,7 @@ class _CartScreenState extends State<CartScreen> {
                                 padding: const EdgeInsets.all(4.0),
                                 child: Row(
                                   mainAxisAlignment:
-                                  MainAxisAlignment.spaceEvenly,
+                                      MainAxisAlignment.spaceEvenly,
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
                                     Image(
@@ -109,7 +109,7 @@ class _CartScreenState extends State<CartScreen> {
                                       width: 130,
                                       child: Column(
                                         crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                            CrossAxisAlignment.start,
                                         children: [
                                           const SizedBox(
                                             height: 5.0,
@@ -126,10 +126,10 @@ class _CartScreenState extends State<CartScreen> {
                                                 children: [
                                                   TextSpan(
                                                       text:
-                                                      '${provider.cart[index].productName!}\n',
+                                                          '${provider.cart[index].productName!}\n',
                                                       style: const TextStyle(
                                                           fontWeight:
-                                                          FontWeight.bold)),
+                                                              FontWeight.bold)),
                                                 ]),
                                           ),
                                           RichText(
@@ -143,10 +143,10 @@ class _CartScreenState extends State<CartScreen> {
                                                 children: [
                                                   TextSpan(
                                                       text:
-                                                      '${provider.cart[index].unitTag!}\n',
+                                                          '${provider.cart[index].unitTag!}\n',
                                                       style: const TextStyle(
                                                           fontWeight:
-                                                          FontWeight.bold)),
+                                                              FontWeight.bold)),
                                                 ]),
                                           ),
                                           RichText(
@@ -160,10 +160,10 @@ class _CartScreenState extends State<CartScreen> {
                                                 children: [
                                                   TextSpan(
                                                       text:
-                                                      '${provider.cart[index].productPrice!}\n',
+                                                          '${provider.cart[index].productPrice!}\n',
                                                       style: const TextStyle(
                                                           fontWeight:
-                                                          FontWeight.bold)),
+                                                              FontWeight.bold)),
                                                 ]),
                                           ),
                                         ],
@@ -171,7 +171,7 @@ class _CartScreenState extends State<CartScreen> {
                                     ),
                                     ValueListenableBuilder<int>(
                                         valueListenable:
-                                        provider.cart[index].quantity!,
+                                            provider.cart[index].quantity!,
                                         builder: (context, val, child) {
                                           return PlusMinusButtons(
                                             addQuantity: () {
@@ -179,25 +179,25 @@ class _CartScreenState extends State<CartScreen> {
                                                   provider.cart[index].id!);
                                               dbHelper!
                                                   .updateQuantity(Cart(
-                                                  id: index,
-                                                  productId:
-                                                  index.toString(),
-                                                  productName: provider
-                                                      .cart[index]
-                                                      .productName,
-                                                  initialPrice: provider
-                                                      .cart[index]
-                                                      .initialPrice,
-                                                  productPrice: provider
-                                                      .cart[index]
-                                                      .productPrice,
-                                                  quantity: ValueNotifier(
-                                                      provider.cart[index]
-                                                          .quantity!.value),
-                                                  unitTag: provider
-                                                      .cart[index].unitTag,
-                                                  image: provider
-                                                      .cart[index].image))
+                                                      id: index,
+                                                      productId:
+                                                          index.toString(),
+                                                      productName: provider
+                                                          .cart[index]
+                                                          .productName,
+                                                      initialPrice: provider
+                                                          .cart[index]
+                                                          .initialPrice,
+                                                      productPrice: provider
+                                                          .cart[index]
+                                                          .productPrice,
+                                                      quantity: ValueNotifier(
+                                                          provider.cart[index]
+                                                              .quantity!.value),
+                                                      unitTag: provider
+                                                          .cart[index].unitTag,
+                                                      image: provider
+                                                          .cart[index].image))
                                                   .then((value) {
                                                 setState(() {
                                                   cart.addTotalPrice(
@@ -286,9 +286,9 @@ class PlusMinusButtons extends StatelessWidget {
   final String text;
   const PlusMinusButtons(
       {Key? key,
-        required this.addQuantity,
-        required this.deleteQuantity,
-        required this.text})
+      required this.addQuantity,
+      required this.deleteQuantity,
+      required this.text})
       : super(key: key);
 
   @override

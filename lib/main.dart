@@ -1,14 +1,15 @@
+import 'package:dilkara/models/cartprovider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:provider/provider.dart';
 import 'core/app_export.dart';
 import 'services/woocommerce_service.dart';
 
 /// A global key to access the state of [ScaffoldMessenger] widget from anywhere
 /// in the application.
 var globalMessengerKey = GlobalKey<ScaffoldMessengerState>();
-
 
 void main() {
   final apiUrl = "https://dilkara.com.au/wc-api/v3";
@@ -22,7 +23,14 @@ void main() {
   ]).then((value) {
     PrefUtils().init();
     Logger.init(kReleaseMode ? LogMode.live : LogMode.debug);
-    runApp(const MyApp());
+    runApp(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => CartProvider()),
+        ],
+        child: MyApp(),
+      ),
+    );
   });
 }
 
@@ -55,9 +63,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
-
