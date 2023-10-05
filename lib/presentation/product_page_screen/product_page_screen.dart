@@ -1,25 +1,29 @@
 import 'dart:convert';
+import 'package:provider/provider.dart';
+import '../../models/DBHelper.dart';
+import '../../models/cart.dart';
+import '../../models/cartprovider.dart';
+import '../cart_screen/cart_screen.dart';
 import 'bloc/product_page_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'models/product_page_model.dart';
 import 'package:dilkara/core/app_export.dart';
 import 'package:flutter/material.dart';
 import 'package:dilkara/services/woocommerce_service.dart';
-import 'package:dilkara/widgets/app_bar/appbar_image.dart';
 import 'package:dilkara/widgets/app_bar/appbar_title.dart';
-import 'package:dilkara/widgets/app_bar/custom_app_bar.dart';
-
 
 class ProductPageScreen extends StatefulWidget {
   final WooCommerceApiService apiService;
   ProductPageScreen(this.apiService); // Constructor that takes apiService
 
-  static Widget builder(BuildContext context, WooCommerceApiService apiService) {
+  static Widget builder(
+      BuildContext context, WooCommerceApiService apiService) {
     return BlocProvider<ProductPageBloc>(
       create: (context) => ProductPageBloc(
           ProductPageState(productPageModelObj: ProductPageModel()))
         ..add(ProductPageInitialEvent()),
-      child: ProductPageScreen(apiService), // Pass apiService to the widget constructor
+      child: ProductPageScreen(
+          apiService), // Pass apiService to the widget constructor
     );
   }
 
@@ -72,7 +76,31 @@ class _ProductPageScreen extends State<ProductPageScreen> {
     return 'https://dilkara.com.au/wp-content/uploads/2023/03/brandmark-design-3.png';
   }
 
+  Future<void> saveData(BuildContext context, int index) async {
+    final cart = Provider.of<CartProvider>(context, listen: false);
+    final dbHelper = await DBHelper();
 
+    final productList = await products; // Wait for the future to complete
+
+    dbHelper.insert(
+      Cart(
+        id: index,
+        productId: index.toString(),
+        productName: productList[index]['title'] as String?,
+        initialPrice: (productList[index]['price'] as double?)?.toInt(),
+        productPrice: (productList[index]['price'] as double?)?.toInt(),
+        quantity: ValueNotifier(1),
+        unitTag: productList[index]['unit'] as String?,
+        image: productList[index]['image'] as String?,
+      ),
+    ).then((value) {
+      cart.addTotalPrice(productList[index]['price'] as double? ?? 0.0);
+      cart.addCounter();
+      print('Product Added to cart');
+    }).onError((error, stackTrace) {
+      print(error.toString());
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,19 +125,22 @@ class _ProductPageScreen extends State<ProductPageScreen> {
                 final productName = product['title'] as String?;
                 return ListTile(
                   leading: FutureBuilder(
-                    future: getProductImage(product['id']), // Replace with your own function to fetch the image URL
+                    future: getProductImage(product[
+                    'id']), // Replace with your own function to fetch the image URL
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.done) {
                         if (snapshot.hasData) {
                           return Image.network(
-                            (snapshot.data as String?) ?? '', // Cast to String or use an empty string if it's null
+                            (snapshot.data as String?) ??
+                                '', // Cast to String or use an empty string if it's null
                             width: 80,
                             height: 80,
                             fit: BoxFit.cover,
                           );
                         } else {
                           // If image URL is not available, you can display a placeholder or an empty container
-                          return Container(width: 80, height: 80, color: Colors.grey);
+                          return Container(
+                              width: 80, height: 80, color: Colors.grey);
                         }
                       } else {
                         // While waiting for the image to load, you can display a loading indicator
@@ -130,12 +161,13 @@ class _ProductPageScreen extends State<ProductPageScreen> {
                     ],
                   ),
                   trailing: ElevatedButton(
-                    onPressed: () {
-                      // Implement your add-to-cart logic here
-                      // You can use a function to add the product to the cart
-                    },
-                    child: Text('Add to Cart'),
-                  ),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CartScreen()));
+                      },
+                      child: const Text('Add to Cart')),
                 );
               },
             );
@@ -145,3 +177,4 @@ class _ProductPageScreen extends State<ProductPageScreen> {
     );
   }
 }
+

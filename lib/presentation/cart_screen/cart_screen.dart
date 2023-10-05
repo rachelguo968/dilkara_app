@@ -1,6 +1,7 @@
-import '../cart_screen/widgets/cart_item_widget.dart';
+import 'package:provider/provider.dart';
+import '../../models/DBHelper.dart';
+import '../../models/cartprovider.dart';
 import 'bloc/cart_bloc.dart';
-import 'models/cart_item_model.dart';
 import 'models/cart_model.dart';
 import 'package:dilkara/core/app_export.dart';
 import 'package:dilkara/widgets/app_bar/appbar_image.dart';
@@ -8,8 +9,9 @@ import 'package:dilkara/widgets/app_bar/appbar_title.dart';
 import 'package:dilkara/widgets/app_bar/custom_app_bar.dart';
 import 'package:dilkara/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
+import '../../models/cart.dart';
 
-class CartScreen extends StatelessWidget {
+class CartScreen extends StatefulWidget {
   static Widget builder(BuildContext context) {
     return BlocProvider<CartBloc>(
       create: (context) => CartBloc(CartState(
@@ -21,7 +23,21 @@ class CartScreen extends StatelessWidget {
   }
 
   @override
+  State<CartScreen> createState() => _CartScreenState();
+}
+
+class _CartScreenState extends State<CartScreen> {
+  DBHelper? dbHelper = DBHelper();
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<CartProvider>().getData();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final cart = Provider.of<CartProvider>(context);
     return SafeArea(
       child: Scaffold(
         backgroundColor: ColorConstant.whiteA700,
@@ -46,7 +62,7 @@ class CartScreen extends StatelessWidget {
           ),
           centerTitle: true,
           title: AppbarTitle(
-            text: "lbl_shopsie".tr,
+            text: "Dilkara".tr,
           ),
           styleType: Style.bgFillWhiteA700,
         ),
@@ -57,136 +73,194 @@ class CartScreen extends StatelessWidget {
             bottom: 24,
           ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Padding(
-                  padding: getPadding(
-                    left: 26,
-                  ),
-                  child: Text(
-                    "lbl_my_cart2".tr.toUpperCase(),
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.left,
-                    style: AppStyle.txtLatoRegular18.copyWith(
-                      letterSpacing: getHorizontalSize(
-                        1.08,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: getPadding(
-                  left: 16,
-                  top: 26,
-                  right: 16,
-                ),
-                child: BlocSelector<CartBloc, CartState, CartModel?>(
-                  selector: (state) => state.cartModelObj,
-                  builder: (context, cartModelObj) {
-                    return ListView.separated(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      separatorBuilder: (context, index) {
-                        return Padding(
-                          padding: getPadding(
-                            top: 16.0,
-                            bottom: 16.0,
-                          ),
-                          child: SizedBox(
-                            width: getHorizontalSize(
-                              358,
-                            ),
-                            child: Divider(
-                              height: getVerticalSize(
-                                1,
+              Expanded(
+                child: Consumer<CartProvider>(
+                  builder: (BuildContext context, provider, widget) {
+                    if (provider.cart.isEmpty) {
+                      return const Center(
+                          child: Text(
+                            'Your Cart is Empty',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 18.0),
+                          ));
+                    } else {
+                      return ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: provider.cart.length,
+                          itemBuilder: (context, index) {
+                            return Card(
+                              color: Colors.blueGrey.shade200,
+                              elevation: 5.0,
+                              child: Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceEvenly,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Image(
+                                      height: 80,
+                                      width: 80,
+                                      image: AssetImage(
+                                          provider.cart[index].image!),
+                                    ),
+                                    SizedBox(
+                                      width: 130,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                        children: [
+                                          const SizedBox(
+                                            height: 5.0,
+                                          ),
+                                          RichText(
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                            text: TextSpan(
+                                                text: 'Name: ',
+                                                style: TextStyle(
+                                                    color: Colors
+                                                        .blueGrey.shade800,
+                                                    fontSize: 16.0),
+                                                children: [
+                                                  TextSpan(
+                                                      text:
+                                                      '${provider.cart[index].productName!}\n',
+                                                      style: const TextStyle(
+                                                          fontWeight:
+                                                          FontWeight.bold)),
+                                                ]),
+                                          ),
+                                          RichText(
+                                            maxLines: 1,
+                                            text: TextSpan(
+                                                text: 'Unit: ',
+                                                style: TextStyle(
+                                                    color: Colors
+                                                        .blueGrey.shade800,
+                                                    fontSize: 16.0),
+                                                children: [
+                                                  TextSpan(
+                                                      text:
+                                                      '${provider.cart[index].unitTag!}\n',
+                                                      style: const TextStyle(
+                                                          fontWeight:
+                                                          FontWeight.bold)),
+                                                ]),
+                                          ),
+                                          RichText(
+                                            maxLines: 1,
+                                            text: TextSpan(
+                                                text: 'Price: ' r"$",
+                                                style: TextStyle(
+                                                    color: Colors
+                                                        .blueGrey.shade800,
+                                                    fontSize: 16.0),
+                                                children: [
+                                                  TextSpan(
+                                                      text:
+                                                      '${provider.cart[index].productPrice!}\n',
+                                                      style: const TextStyle(
+                                                          fontWeight:
+                                                          FontWeight.bold)),
+                                                ]),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    ValueListenableBuilder<int>(
+                                        valueListenable:
+                                        provider.cart[index].quantity!,
+                                        builder: (context, val, child) {
+                                          return PlusMinusButtons(
+                                            addQuantity: () {
+                                              cart.addQuantity(
+                                                  provider.cart[index].id!);
+                                              dbHelper!
+                                                  .updateQuantity(Cart(
+                                                  id: index,
+                                                  productId:
+                                                  index.toString(),
+                                                  productName: provider
+                                                      .cart[index]
+                                                      .productName,
+                                                  initialPrice: provider
+                                                      .cart[index]
+                                                      .initialPrice,
+                                                  productPrice: provider
+                                                      .cart[index]
+                                                      .productPrice,
+                                                  quantity: ValueNotifier(
+                                                      provider.cart[index]
+                                                          .quantity!.value),
+                                                  unitTag: provider
+                                                      .cart[index].unitTag,
+                                                  image: provider
+                                                      .cart[index].image))
+                                                  .then((value) {
+                                                setState(() {
+                                                  cart.addTotalPrice(
+                                                      double.parse(provider
+                                                          .cart[index]
+                                                          .productPrice
+                                                          .toString()));
+                                                });
+                                              });
+                                            },
+                                            deleteQuantity: () {
+                                              cart.deleteQuantity(
+                                                  provider.cart[index].id!);
+                                              cart.removeTotalPrice(
+                                                  double.parse(provider
+                                                      .cart[index].productPrice
+                                                      .toString()));
+                                            },
+                                            text: val.toString(),
+                                          );
+                                        }),
+                                    IconButton(
+                                        onPressed: () {
+                                          dbHelper!.deleteCartItem(
+                                              provider.cart[index].id!);
+                                          provider.removeItem(
+                                              provider.cart[index].id!);
+                                          provider.removeCounter();
+                                        },
+                                        icon: Icon(
+                                          Icons.delete,
+                                          color: Colors.red.shade800,
+                                        )),
+                                  ],
+                                ),
                               ),
-                              thickness: getVerticalSize(
-                                1,
-                              ),
-                              color: ColorConstant.gray200,
-                            ),
-                          ),
-                        );
-                      },
-                      itemCount: cartModelObj?.cartItemList.length ?? 0,
-                      itemBuilder: (context, index) {
-                        CartItemModel model =
-                            cartModelObj?.cartItemList[index] ??
-                                CartItemModel();
-                        return CartItemWidget(
-                          model,
-                        );
-                      },
-                    );
+                            );
+                          });
+                    }
                   },
                 ),
               ),
-              Padding(
-                padding: getPadding(
-                  top: 98,
-                ),
-                child: Divider(
-                  height: getVerticalSize(
-                    1,
-                  ),
-                  thickness: getVerticalSize(
-                    1,
-                  ),
-                  color: ColorConstant.gray200,
-                ),
-              ),
-              Padding(
-                padding: getPadding(
-                  left: 16,
-                  top: 21,
-                  right: 16,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: getPadding(
-                        top: 2,
-                        bottom: 2,
-                      ),
-                      child: Text(
-                        "lbl_sub_total2".tr.toUpperCase(),
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.left,
-                        style: AppStyle.txtLatoSemiBold14Gray90001,
-                      ),
-                    ),
-                    Text(
-                      "lbl_111_80".tr.toUpperCase(),
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.left,
-                      style: AppStyle.txtLatoRegular18.copyWith(
-                        letterSpacing: getHorizontalSize(
-                          1.08,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: getPadding(
-                  top: 21,
-                  bottom: 5,
-                ),
-                child: Divider(
-                  height: getVerticalSize(
-                    1,
-                  ),
-                  thickness: getVerticalSize(
-                    1,
-                  ),
-                  color: ColorConstant.gray200,
-                ),
-              ),
+              Consumer<CartProvider>(
+                builder: (BuildContext context, value, Widget? child) {
+                  final ValueNotifier<int?> totalPrice = ValueNotifier(null);
+                  for (var element in value.cart) {
+                    totalPrice.value =
+                        (element.productPrice! * element.quantity!.value) +
+                            (totalPrice.value ?? 0);
+                  }
+                  return Column(
+                    children: [
+                      ValueListenableBuilder<int?>(
+                          valueListenable: totalPrice,
+                          builder: (context, val, child) {
+                            return ReusableWidget(
+                                title: 'Sub-Total',
+                                value: r'$' + (val?.toStringAsFixed(2) ?? '0'));
+                          }),
+                    ],
+                  );
+                },
+              )
             ],
           ),
         ),
@@ -201,6 +275,54 @@ class CartScreen extends StatelessWidget {
             bottom: 64,
           ),
         ),
+      ),
+    );
+  }
+}
+
+class PlusMinusButtons extends StatelessWidget {
+  final VoidCallback deleteQuantity;
+  final VoidCallback addQuantity;
+  final String text;
+  const PlusMinusButtons(
+      {Key? key,
+        required this.addQuantity,
+        required this.deleteQuantity,
+        required this.text})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        IconButton(onPressed: deleteQuantity, icon: const Icon(Icons.remove)),
+        Text(text),
+        IconButton(onPressed: addQuantity, icon: const Icon(Icons.add)),
+      ],
+    );
+  }
+}
+
+class ReusableWidget extends StatelessWidget {
+  final String title, value;
+  const ReusableWidget({Key? key, required this.title, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: Theme.of(context).textTheme.subtitle1,
+          ),
+          Text(
+            value.toString(),
+            style: Theme.of(context).textTheme.subtitle2,
+          ),
+        ],
       ),
     );
   }

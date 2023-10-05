@@ -18,14 +18,12 @@ import 'package:dilkara/presentation/product_page_screen/product_page_screen.dar
 import 'package:dilkara/services/woocommerce_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
 final apiUrl = "https://dilkara.com.au/wc-api/v3";
 final consumerKey = "ck_5548abde185d8a83fa7781e7c6bce5459f52616c";
 final consumerSecret = "cs_6ae6830cba04c992ed7bf63ed36f5d1015661015";
 final apiService = WooCommerceApiService(apiUrl, consumerKey, consumerSecret);
 
-
-Future<List<Map<String, dynamic>>> fetchProducts()  async {
+Future<List<Map<String, dynamic>>> fetchProducts() async {
   final response = await apiService.fetchProducts();
   if (response is Map<String, dynamic> && response.containsKey('products')) {
     // Handle the map structure here and extract the list of products
@@ -51,7 +49,6 @@ class Product {
   }
 }
 
-
 class MainLandingScreen extends StatelessWidget {
   static Widget builder(BuildContext context) {
     return BlocProvider<MainLandingBloc>(
@@ -62,7 +59,6 @@ class MainLandingScreen extends StatelessWidget {
       child: MainLandingScreen(),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -287,10 +283,17 @@ class MainLandingScreen extends StatelessWidget {
                               ],
                             ),
                           ),
-                          Container(child:ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => ProductPageScreen(apiService)));},
-                              child: Text('Go to Product Page')),),
+                          Container(
+                            child: ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              ProductPageScreen(apiService)));
+                                },
+                                child: Text('Go to Product Page')),
+                          ),
                           CustomImageView(
                             svgPath: ImageConstant.imgUnion,
                             height: getVerticalSize(
@@ -425,40 +428,39 @@ class MainLandingScreen extends StatelessWidget {
                       height: getVerticalSize(
                         320,
                       ), //interactive button show top3 products of each category, edit listItemname?
-                        child: BlocSelector<MainLandingBloc, MainLandingState,
-                            MainLandingModel?>(
-                          selector: (state) => state.mainLandingModelObj,
-                          builder: (context, mainLandingModelObj) {
-                            return ListView.separated(
-                              padding: getPadding(
-                                left: 16,
-                                top: 32,
-                              ),
-                              scrollDirection: Axis.horizontal,
-                              separatorBuilder: (context, index) {
-                                return SizedBox(
-                                  height: getVerticalSize(
-                                    10,
-                                  ),
-                                );
-                              },
-                              itemCount: mainLandingModelObj
-                                  ?.listitemnameItemList.length ??
-                                  0,
-                              itemBuilder: (context, index) {
-                                ListitemnameItemModel model = mainLandingModelObj
-                                    ?.listitemnameItemList[index] ??
-                                    ListitemnameItemModel();
-                                return ListitemnameItemWidget(
-                                  model,
-                                );
-                              },
-                            );
-                          },
-                        ),
+                      child: BlocSelector<MainLandingBloc, MainLandingState,
+                          MainLandingModel?>(
+                        selector: (state) => state.mainLandingModelObj,
+                        builder: (context, mainLandingModelObj) {
+                          return ListView.separated(
+                            padding: getPadding(
+                              left: 16,
+                              top: 32,
+                            ),
+                            scrollDirection: Axis.horizontal,
+                            separatorBuilder: (context, index) {
+                              return SizedBox(
+                                height: getVerticalSize(
+                                  10,
+                                ),
+                              );
+                            },
+                            itemCount: mainLandingModelObj
+                                    ?.listitemnameItemList.length ??
+                                0,
+                            itemBuilder: (context, index) {
+                              ListitemnameItemModel model = mainLandingModelObj
+                                      ?.listitemnameItemList[index] ??
+                                  ListitemnameItemModel();
+                              return ListitemnameItemWidget(
+                                model,
+                              );
+                            },
+                          );
+                        },
+                      ),
                     ),
                   ),
-
                   Container(
                     width: double.maxFinite,
                     child: Container(
@@ -1153,7 +1155,6 @@ class MainLandingScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-
                 ],
               ),
             ),
