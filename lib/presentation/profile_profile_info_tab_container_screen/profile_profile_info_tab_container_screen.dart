@@ -62,7 +62,7 @@ class _ProfileProfileInfoTabContainerScreenState
                         onTapArrowleft1(context);
                       }),
                   centerTitle: true,
-                  title: AppbarTitle(text: "lbl_shopsie".tr),
+                  title: AppbarTitle(text: "Dilkara".tr),
                   styleType: Style.bgFillWhiteA700),
               body: Container(
                   width: double.maxFinite,

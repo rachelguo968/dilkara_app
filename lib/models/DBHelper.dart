@@ -25,7 +25,7 @@ class DBHelper {
 // creating database table
   _onCreate(Database db, int version) async {
     await db.execute(
-        'CREATE TABLE cart(id INTEGER PRIMARY KEY, productId VARCHAR UNIQUE, productName TEXT, initialPrice INTEGER, productPrice INTEGER, quantity INTEGER, unitTag TEXT, image TEXT)');
+        'CREATE TABLE cart(id INTEGER PRIMARY KEY, productId VARCHAR UNIQUE, productName TEXT, initialPrice DOUBLE, productPrice DOUBLE, quantity INTEGER, unitTag TEXT, image TEXT)');
   }
 
 // inserting data into the table

@@ -144,8 +144,7 @@ class _CartScreenState extends State<CartScreen> {
                                                     fontSize: 16.0),
                                                 children: [
                                                   TextSpan(
-                                                      text:
-                                                          '${provider.cart[index].productPrice!}\n',
+                                                      text: '\$${provider.cart[index].productPrice!.toStringAsFixed(2)}\n',
                                                       style: const TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold)),
@@ -227,21 +226,23 @@ class _CartScreenState extends State<CartScreen> {
               ),
               Consumer<CartProvider>(
                 builder: (BuildContext context, value, Widget? child) {
-                  final ValueNotifier<int?> totalPrice = ValueNotifier(null);
+                  double totalPrice = 0.0;
                   for (var element in value.cart) {
-                    totalPrice.value =
-                        (element.productPrice! * element.quantity!.value) +
-                            (totalPrice.value ?? 0);
+                    totalPrice +=
+                    (element.productPrice!.toDouble() * element.quantity!.value.toDouble());
                   }
+                  final totalPriceNotifier = ValueNotifier<double?>(totalPrice);
                   return Column(
                     children: [
-                      ValueListenableBuilder<int?>(
-                          valueListenable: totalPrice,
-                          builder: (context, val, child) {
-                            return ReusableWidget(
-                                title: 'Sub-Total',
-                                value: r'$' + (val?.toStringAsFixed(2) ?? '0'));
-                          }),
+                      ValueListenableBuilder<double?>(
+                        valueListenable: totalPriceNotifier,
+                        builder: (context, val, child) {
+                          return ReusableWidget(
+                            title: 'Sub-Total',
+                            value: r'$' + (val?.toStringAsFixed(2) ?? '0'),
+                          );
+                        },
+                      ),
                     ],
                   );
                 },
