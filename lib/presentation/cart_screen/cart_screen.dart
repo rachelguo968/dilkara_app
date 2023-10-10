@@ -102,7 +102,8 @@ class _CartScreenState extends State<CartScreen> {
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
                                     Image.network(
-                                      productitemlist[index].image,
+                                      provider.cart[index].image ??
+                                          'https://dilkara.com.au/wp-content/uploads/woocommerce-placeholder-300x400.png',
                                       width: 80,
                                       height: 80,
                                       fit: BoxFit.cover,
@@ -144,7 +145,8 @@ class _CartScreenState extends State<CartScreen> {
                                                     fontSize: 16.0),
                                                 children: [
                                                   TextSpan(
-                                                      text: '\$${provider.cart[index].productPrice!.toStringAsFixed(2)}\n',
+                                                      text:
+                                                          '\$${provider.cart[index].productPrice!.toStringAsFixed(2)}\n',
                                                       style: const TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold)),
@@ -228,8 +230,8 @@ class _CartScreenState extends State<CartScreen> {
                 builder: (BuildContext context, value, Widget? child) {
                   double totalPrice = 0.0;
                   for (var element in value.cart) {
-                    totalPrice +=
-                    (element.productPrice!.toDouble() * element.quantity!.value.toDouble());
+                    totalPrice += (element.productPrice!.toDouble() *
+                        element.quantity!.value.toDouble());
                   }
                   final totalPriceNotifier = ValueNotifier<double?>(totalPrice);
                   return Column(
@@ -238,7 +240,7 @@ class _CartScreenState extends State<CartScreen> {
                         valueListenable: totalPriceNotifier,
                         builder: (context, val, child) {
                           return ReusableWidget(
-                            title: 'Sub-Total',
+                            title: 'Sub Total',
                             value: r'$' + (val?.toStringAsFixed(2) ?? '0'),
                           );
                         },
@@ -251,8 +253,7 @@ class _CartScreenState extends State<CartScreen> {
           ),
         ),
         bottomNavigationBar: InkWell(
-          onTap: () {
-          },
+          onTap: () {},
           child: Container(
             color: Colors.black54,
             alignment: Alignment.center,

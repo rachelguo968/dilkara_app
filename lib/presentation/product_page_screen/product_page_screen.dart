@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:dilkara/widgets/app_bar/appbar_image.dart';
+import 'package:dilkara/widgets/app_bar/custom_app_bar.dart';
 import 'package:provider/provider.dart';
 import '../../models/DBHelper.dart';
 import '../../models/cart.dart';
@@ -54,9 +56,6 @@ class _ProductPageScreen extends State<ProductPageScreen> {
     }
   }
 
-
-
-
   @override
   Widget build(BuildContext context) {
     loadProductsFromApi();
@@ -84,10 +83,32 @@ class _ProductPageScreen extends State<ProductPageScreen> {
         print(error.toString());
       });
     }
+
     return Scaffold(
-      appBar: AppBar(
+      appBar: CustomAppBar(
+        height: getVerticalSize(
+          64,
+        ),
+        leadingWidth: 39,
+        leading: AppbarImage(
+          height: getSize(
+            24,
+          ),
+          width: getSize(
+            24,
+          ),
+          svgPath: ImageConstant.imgMenuBlack900,
+          margin: getMargin(
+            left: 15,
+            top: 18,
+            bottom: 22,
+          ),
+        ),
         centerTitle: true,
-        title: const Text('Dilkara'),
+        title: AppbarTitle(
+          text: "Dilkara".tr,
+        ),
+        styleType: Style.bgFillWhiteA700,
         actions: [
           Stack(
             alignment: Alignment.topRight,
@@ -98,6 +119,7 @@ class _ProductPageScreen extends State<ProductPageScreen> {
                       MaterialPageRoute(builder: (context) => CartScreen()));
                 },
                 icon: const Icon(Icons.shopping_cart),
+                color: Colors.black,
               ),
               Consumer<CartProvider>(
                 builder: (context, value, child) {
@@ -105,11 +127,11 @@ class _ProductPageScreen extends State<ProductPageScreen> {
                   return itemCount > 0
                       ? CircleAvatar(
                           radius: 10,
-                          backgroundColor: Colors.red,
+                          backgroundColor: Colors.grey,
                           child: Text(
                             itemCount.toString(),
                             style: const TextStyle(
-                              color: Colors.white,
+                              color: Colors.black,
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
                             ),
@@ -135,50 +157,68 @@ class _ProductPageScreen extends State<ProductPageScreen> {
             return Text('Error: ${snapshot.error}');
           } else {
             final productList = snapshot.data as List<dynamic>;
-            return ListView.builder(
+            return GridView.builder(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 0.75,
+              ),
               itemCount: productList.length,
               itemBuilder: (context, index) {
                 final product = productList[index];
                 final productName = product['title'] as String?;
-                return ListTile(
-                  leading: Builder(
-                    builder: (context) {
-                      if (productitemlist.isNotEmpty) {
-                        return Image.network(
-                          productitemlist[index].image,
-                          width: 80,
-                          height: 80,
-                          fit: BoxFit.cover,
-                        );
-                      } else {
-                        return Container(
-                          width: 80,
-                          height: 80,
-                          color: Colors.grey,
-                        );
-                      }
-                    },
-                  ),
-                  title: Text(productName ?? 'No Name'),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                return Card(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('\$${product['price'] ?? '0.00'}'),
-                      if (product['categories'] != null)
-                        Text(
-                          'Categories: ${product['categories'].join(', ')}',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                      Expanded(
+                        child: Builder(
+                          builder: (context) {
+                            if (productitemlist.isNotEmpty) {
+                              return Image.network(
+                                productitemlist[index].image,
+                                fit: BoxFit.cover,
+                              );
+                            } else {
+                              return Container(
+                                color: Colors.grey,
+                              );
+                            }
+                          },
                         ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(productName ?? 'No Name',
+                                textAlign: TextAlign.center),
+                            Text('\$${product['price'] ?? '0.00'}',
+                                textAlign: TextAlign.center),
+                            if (product['categories'] != null)
+                              Text(
+                                'Categories: ${product['categories'].join(', ')}',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.center,
+                              ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            saveData(index);
+                          },
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                Colors.black54),
+                          ),
+                          child: const Text('Add to Cart'),
+                        ),
+                      ),
                     ],
                   ),
-                  trailing: ElevatedButton(
-                      onPressed: () {
-                        saveData(index);
-                      },
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(Colors.black54),
-                      ),
-                      child: const Text('Add to Cart')),
                 );
               },
             );
