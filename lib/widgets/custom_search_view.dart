@@ -2,20 +2,22 @@ import 'package:dilkara/core/app_export.dart';
 import 'package:flutter/material.dart';
 
 class CustomSearchView extends StatelessWidget {
-  CustomSearchView(
-      {this.padding,
-      this.variant,
-      this.fontStyle,
-      this.alignment,
-      this.width,
-      this.margin,
-      this.controller,
-      this.focusNode,
-      this.hintText,
-      this.prefix,
-      this.prefixConstraints,
-      this.suffix,
-      this.suffixConstraints});
+  CustomSearchView({
+    this.padding,
+    this.variant,
+    this.fontStyle,
+    this.alignment,
+    this.width,
+    this.margin,
+    this.controller,
+    this.focusNode,
+    this.hintText,
+    this.prefix,
+    this.prefixConstraints,
+    this.suffix,
+    this.suffixConstraints,
+    required void Function(String) onSubmitted,
+  }) : onSubmitted = onSubmitted;
 
   SearchViewPadding? padding;
 
@@ -43,6 +45,8 @@ class CustomSearchView extends StatelessWidget {
 
   BoxConstraints? suffixConstraints;
 
+  final Function(String) onSubmitted;
+
   @override
   Widget build(BuildContext context) {
     return alignment != null
@@ -62,6 +66,10 @@ class CustomSearchView extends StatelessWidget {
         focusNode: focusNode,
         style: _setFontStyle(),
         decoration: _buildDecoration(),
+        onFieldSubmitted: (query) {
+          onSubmitted(
+              query); // Call the onSubmitted callback when the field is submitted
+        },
       ),
     );
   }

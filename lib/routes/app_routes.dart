@@ -50,14 +50,23 @@ class AppRoutes {
         registerScreen: RegisterScreen.builder,
         mainLandingScreen: MainLandingScreen.builder,
         productDiscoverScreen: ProductDiscoverScreen.builder,
-        productSearchScreen: ProductSearchScreen.builder,
+        productSearchScreen: (BuildContext context) {
+          final apiService = WooCommerceApiService(
+              "https://dilkara.com.au/wc-api/v3",
+              "ck_5548abde185d8a83fa7781e7c6bce5459f52616c",
+              "cs_6ae6830cba04c992ed7bf63ed36f5d1015661015"); // Create an instance of your API service here
+          return ProductSearchScreen.builder(context, apiService);
+        },
         cartScreen: CartScreen.builder,
         profileProfileInfoTabContainerScreen:
             ProfileProfileInfoTabContainerScreen.builder,
         productPageScreen: (BuildContext context) {
-          final apiService = WooCommerceApiService("https://dilkara.com.au/wc-api/v3","ck_5548abde185d8a83fa7781e7c6bce5459f52616c","cs_6ae6830cba04c992ed7bf63ed36f5d1015661015"); // Create an instance of your API service here
+          final apiService = WooCommerceApiService(
+              "https://dilkara.com.au/wc-api/v3",
+              "ck_5548abde185d8a83fa7781e7c6bce5459f52616c",
+              "cs_6ae6830cba04c992ed7bf63ed36f5d1015661015"); // Create an instance of your API service here
           return ProductPageScreen.builder(context, apiService);
-          },
+        },
         appNavigationScreen: AppNavigationScreen.builder,
         initialRoute: SplashScreen.builder
       };

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:dilkara/presentation/product_search_screen/product_search_screen.dart';
 import 'package:dilkara/widgets/app_bar/appbar_image.dart';
 import 'package:dilkara/widgets/app_bar/custom_app_bar.dart';
 import 'package:provider/provider.dart';
@@ -35,7 +36,10 @@ class ProductPageScreen extends StatefulWidget {
 }
 
 class _ProductPageScreen extends State<ProductPageScreen> {
+  List<dynamic> productList = [];
+  List<dynamic> filteredProductList = [];
   late Future<List<Map<String, dynamic>>> products;
+  TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
@@ -47,11 +51,14 @@ class _ProductPageScreen extends State<ProductPageScreen> {
     final response = await widget.apiService.fetchProducts();
 
     if (response is Map<String, dynamic> && response.containsKey('products')) {
-      // Handle the map structure here and extract the list of products
       final productList = response['products'] as List<dynamic>;
-      return productList.cast<Map<String, dynamic>>().toList();
+      final castedProductList =
+          productList.cast<Map<String, dynamic>>().toList();
+      this.productList = castedProductList;
+      // Initialize both lists with the products data
+      filteredProductList = castedProductList;
+      return castedProductList;
     } else {
-      // Handle the case where the response is not as expected
       throw Exception('Unexpected API response format');
     }
   }
@@ -115,30 +122,45 @@ class _ProductPageScreen extends State<ProductPageScreen> {
             children: [
               IconButton(
                 onPressed: () {
+                  NavigatorService.navigatorKey.currentState!
+                      .pushNamed(AppRoutes.productSearchScreen);
+                },
+                icon: Icon(Icons.search), // Use the search icon
+                color: Colors.black,
+              ),
+            ],
+          ),
+          Stack(
+            alignment: Alignment.topRight,
+            children: [
+              IconButton(
+                onPressed: () {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => CartScreen()));
                 },
-                icon: const Icon(Icons.shopping_cart),
+                icon: Icon(Icons.shopping_cart), // Use the cart icon
                 color: Colors.black,
               ),
               Consumer<CartProvider>(
                 builder: (context, value, child) {
                   final itemCount = value.getCounter();
                   return itemCount > 0
-                      ? CircleAvatar(
-                          radius: 10,
-                          backgroundColor: Colors.grey,
-                          child: Text(
-                            itemCount.toString(),
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
+                      ? Positioned(
+                          right: 0,
+                          child: CircleAvatar(
+                            radius: 10,
+                            backgroundColor: Colors.grey,
+                            child: Text(
+                              itemCount.toString(),
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         )
-                      : const SizedBox
-                          .shrink(); // Hide the badge when count is 0
+                      : SizedBox.shrink();
                 },
               ),
             ],
@@ -152,20 +174,30 @@ class _ProductPageScreen extends State<ProductPageScreen> {
         future: products,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator();
+            return Center(
+              child: SizedBox(
+                width: 50.0, // Set the size of the container
+                height: 50.0,
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.grey),
+                  strokeWidth: 4,
+                ),
+              ),
+            );
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           } else {
-            final productList = snapshot.data as List<dynamic>;
+            productList = snapshot.data as List<dynamic>;
             return GridView.builder(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 childAspectRatio: 0.75,
               ),
-              itemCount: productList.length,
+              itemCount: filteredProductList.length,
               itemBuilder: (context, index) {
-                final product = productList[index];
+                final product = filteredProductList[index];
                 final productName = product['title'] as String?;
+
                 return Card(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -175,7 +207,8 @@ class _ProductPageScreen extends State<ProductPageScreen> {
                           builder: (context) {
                             if (productitemlist.isNotEmpty) {
                               return Image.network(
-                                productitemlist[index].image,
+                                productitemlist[productList.indexOf(product)]
+                                    .image,
                                 fit: BoxFit.cover,
                               );
                             } else {
@@ -208,7 +241,7 @@ class _ProductPageScreen extends State<ProductPageScreen> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () {
-                            saveData(index);
+                            saveData(productList.indexOf(product));
                           },
                           style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all<Color>(
@@ -226,5 +259,14 @@ class _ProductPageScreen extends State<ProductPageScreen> {
         },
       ),
     );
+  }
+
+  void filterProducts(String query) {
+    setState(() {
+      filteredProductList = productList.where((product) {
+        final productName = (product['title'] as String?) ?? '';
+        return productName.toLowerCase().contains(query.toLowerCase());
+      }).toList();
+    });
   }
 }
