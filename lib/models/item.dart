@@ -82,3 +82,6 @@ void loadProductsFromApi() async {
     print('Error loading products from API: $e');
   }
 }
+
+
+

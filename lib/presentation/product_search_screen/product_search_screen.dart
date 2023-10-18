@@ -8,6 +8,7 @@ import 'package:dilkara/widgets/app_bar/appbar_title.dart';
 import 'package:dilkara/widgets/app_bar/custom_app_bar.dart';
 import 'package:provider/provider.dart';
 
+import '../product_detail_screen/product_detail_screen.dart';
 import '../product_search_screen/widgets/list1_item_widget.dart';
 import 'bloc/product_search_bloc.dart';
 import 'models/list1_item_model.dart';
@@ -200,7 +201,17 @@ class _ProductSearchScreen extends State<ProductSearchScreen> {
                       final product = filteredProductList[index];
                       final productName = product['title'] as String?;
 
-                      return Card(
+                      return GestureDetector(
+                          onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => ProductDetailScreen(
+                              productDetails: product, // Pass the product details
+                            ),
+                          ),
+                        );
+                      },
+                      child:Card(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -257,6 +268,7 @@ class _ProductSearchScreen extends State<ProductSearchScreen> {
                             ),
                           ],
                         ),
+                      ),
                       );
                     },
                   );

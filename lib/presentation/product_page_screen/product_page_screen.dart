@@ -8,6 +8,7 @@ import '../../models/cart.dart';
 import '../../models/cartprovider.dart';
 import '../../models/item.dart';
 import '../cart_screen/cart_screen.dart';
+import '../product_detail_screen/product_detail_screen.dart';
 import 'bloc/product_page_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'models/product_page_model.dart';
@@ -198,59 +199,66 @@ class _ProductPageScreen extends State<ProductPageScreen> {
                 final product = filteredProductList[index];
                 final productName = product['title'] as String?;
 
-                return Card(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: Builder(
-                          builder: (context) {
-                            if (productitemlist.isNotEmpty) {
-                              return Image.network(
-                                productitemlist[productList.indexOf(product)]
-                                    .image,
-                                fit: BoxFit.cover,
-                              );
-                            } else {
-                              return Container(
-                                color: Colors.grey,
-                              );
-                            }
-                          },
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => ProductDetailScreen(
+                          productDetails: product, // Pass the product details
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(productName ?? 'No Name',
-                                textAlign: TextAlign.center),
-                            Text('\$${product['price'] ?? '0.00'}',
-                                textAlign: TextAlign.center),
-                            if (product['categories'] != null)
-                              Text(
-                                'Categories: ${product['categories'].join(', ')}',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                                textAlign: TextAlign.center,
-                              ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            saveData(productList.indexOf(product));
-                          },
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                                Colors.black54),
+                    );
+                  },
+                  child: Card(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Builder(
+                            builder: (context) {
+                              if (productitemlist.isNotEmpty) {
+                                return Image.network(
+                                  productitemlist[productList.indexOf(product)].image,
+                                  fit: BoxFit.cover,
+                                );
+                              } else {
+                                return Container(
+                                  color: Colors.grey,
+                                );
+                              }
+                            },
                           ),
-                          child: const Text('Add to Cart'),
                         ),
-                      ),
-                    ],
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(productName ?? 'No Name', textAlign: TextAlign.center),
+                              Text('\$${product['price'] ?? '0.00'}', textAlign: TextAlign.center),
+                              if (product['categories'] != null)
+                                Text(
+                                  'Categories: ${product['categories'].join(', ')}',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                  textAlign: TextAlign.center,
+                                ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              saveData(productList.indexOf(product));
+                            },
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(Colors.black54),
+                            ),
+                            child: const Text('Add to Cart'),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },
