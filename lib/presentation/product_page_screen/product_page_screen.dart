@@ -54,7 +54,7 @@ class _ProductPageScreen extends State<ProductPageScreen> {
     if (response is Map<String, dynamic> && response.containsKey('products')) {
       final productList = response['products'] as List<dynamic>;
       final castedProductList =
-          productList.cast<Map<String, dynamic>>().toList();
+      productList.cast<Map<String, dynamic>>().toList();
       this.productList = castedProductList;
       // Initialize both lists with the products data
       filteredProductList = castedProductList;
@@ -147,20 +147,20 @@ class _ProductPageScreen extends State<ProductPageScreen> {
                   final itemCount = value.getCounter();
                   return itemCount > 0
                       ? Positioned(
-                          right: 0,
-                          child: CircleAvatar(
-                            radius: 10,
-                            backgroundColor: Colors.grey,
-                            child: Text(
-                              itemCount.toString(),
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        )
+                    right: 0,
+                    child: CircleAvatar(
+                      radius: 10,
+                      backgroundColor: Colors.grey,
+                      child: Text(
+                        itemCount.toString(),
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  )
                       : SizedBox.shrink();
                 },
               ),
